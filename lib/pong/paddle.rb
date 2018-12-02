@@ -9,6 +9,7 @@ class Pong::Paddle
   HEIGHT = 50
 
   def initialize(paddle_position, pong)
+    @position = 0
     @pong = pong
 
     case paddle_position
@@ -20,7 +21,7 @@ class Pong::Paddle
     
     @sprite = Rectangle.new(
       x: paddle_x,
-      y: 0,
+      y: position,
       width: WIDTH,
       height: HEIGHT, 
       color: "white"
