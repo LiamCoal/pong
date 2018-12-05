@@ -13,6 +13,7 @@ class Pong
   attr_reader :l
   attr_reader :r
   attr_reader :player
+  attr_reader :players
   attr_reader :opponent
   attr_reader :network
   attr_reader :ball
@@ -22,11 +23,12 @@ class Pong
     @height = height
     @l = Pong::Player.new(:left, self)
     @r = Pong::Player.new(:right, self)
+    @players = { :l => @l, :r => @r }
     @player = l
     @opponent = r
     @network = Pong::Network::UDP.new(9999)
     @ball = Ball.new(self, width / 2, height / 2)
-    ball.go(Pong::Moth::Angles.radians(rand(0..360)), 5)
+    ball.reset
   end
 
   def in_bounds?(x, y)
@@ -80,4 +82,9 @@ class Pong
     network.send("hi")
   end
 
+  def score(side)
+    players[side].score += 1
+    ball.reset
+    puts players[side].score.to_s
+  end
 end

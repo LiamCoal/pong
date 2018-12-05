@@ -46,25 +46,46 @@ class Pong::Ball
     Pong::Moth::Angles.new_pos(x, y, angle, vel)
   end
 
+  def overlaps?(a, b)
+    return false if a.x1 > b.x3 || a.x3 < b.x1
+    return false if a.y1 > b.y3 || a.y3 < b.y1
+    return true
+  end
+
   def hit_player?(player)
-    return true if player.paddle.sprite.contains?(x, y)
-    return true if player.paddle.sprite.contains?(x + size, y)
-    return true if player.paddle.sprite.contains?(x + size, y + size)
-    return true if player.paddle.sprite.contains?(x, y + size)
-    return false
+    return overlaps?(sprite, player.paddle.sprite)
+  end
+
+  def reset
+    move(pong.width / 2, pong.height / 2)
+    go(Pong::Moth::Angles.radians(rand(0..360)), 5)
   end
 
   def handle_update
     (x, y) = calculate_new_position
 
-    bounce(:x) if hit_player?(pong.l) || hit_player?(pong.r)
-    if (s = pong.in_bounds?(x, y)) != true
-      bounce(s)
-    elsif (s = pong.in_bounds?(x + size, y + size)) != true
-      bounce(s)
+    if hit_player?(pong.l)
+      bounce(:x)
+      move(x + pong.l.paddle.sprite.width, y)
+      return
     end
 
-    (x, y) = calculate_new_position
+    if hit_player?(pong.r)
+      bounce(:x)
+      move(x - pong.r.paddle.sprite.width, y)
+      return
+    end
+
+    sl = pong.in_bounds?(x, y)
+    sr = pong.in_bounds?(x + size, y + size)
+    if sl == :x || sr == :x
+      return pong.score(:l) if sl == :x
+      return pong.score(:r) if sr == :x
+    elsif sl == :y || sr == :y
+      bounce(:y)
+      (x, y) = calculate_new_position
+    end
+
     move(x, y)
   end
 
