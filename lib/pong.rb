@@ -4,6 +4,8 @@ require "pong/paddle"
 require "pong/player"
 require "pong/network"
 require "liamiam/tools"
+require "pong/ball"
+require "pong/math/angles"
 
 class Pong
   attr_reader :width
@@ -13,6 +15,7 @@ class Pong
   attr_reader :player
   attr_reader :opponent
   attr_reader :network
+  attr_reader :ball
 
   def initialize(width, height)
     @width = width
@@ -22,6 +25,14 @@ class Pong
     @player = l
     @opponent = r
     @network = Pong::Network::UDP.new(9999)
+    @ball = Ball.new(self, width / 2, height / 2)
+    ball.go(Pong::Moth::Angles.radians(0), 3)
+  end
+
+  def in_bounds?(x, y)
+    return :x if x < 0 || x >= width
+    return :y if y < 0 || y >= height
+    true
   end
 
   def send_paddle_position
@@ -37,10 +48,13 @@ class Pong
     send_paddle_position
   end
 
+
   def handle_update
     if message = network.recv
       recv_paddle_position(message.to_i)
     end
+
+    ball.handle_update
   end
 
   def serve

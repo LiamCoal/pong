@@ -6,6 +6,9 @@ require 'pong'
 
 pong = Pong.new(800, 400)
 
+angle = 90.0
+vel = 1.0
+
 WRD = WordWrapper.new
 UDP = Pong::Network::UDP.new(9998)
 
@@ -52,6 +55,7 @@ end
 
 update do
   pong.handle_update
+  
 end
   
 show
