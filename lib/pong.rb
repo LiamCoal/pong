@@ -26,7 +26,7 @@ class Pong
     @opponent = r
     @network = Pong::Network::UDP.new(9999)
     @ball = Ball.new(self, width / 2, height / 2)
-    ball.go(Pong::Moth::Angles.radians(0), 3)
+    ball.go(Pong::Moth::Angles.radians(rand(0..360)), 5)
   end
 
   def in_bounds?(x, y)
