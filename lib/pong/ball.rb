@@ -46,9 +46,18 @@ class Pong::Ball
     Pong::Moth::Angles.new_pos(x, y, angle, vel)
   end
 
+  def hit_player?(player)
+    return true if player.paddle.sprite.contains?(x, y)
+    return true if player.paddle.sprite.contains?(x + size, y)
+    return true if player.paddle.sprite.contains?(x + size, y + size)
+    return true if player.paddle.sprite.contains?(x, y + size)
+    return false
+  end
+
   def handle_update
     (x, y) = calculate_new_position
 
+    bounce(:x) if hit_player?(pong.l) || hit_player?(pong.r)
     if (s = pong.in_bounds?(x, y)) != true
       bounce(s)
     elsif (s = pong.in_bounds?(x + size, y + size)) != true
