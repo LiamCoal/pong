@@ -86,5 +86,6 @@ class Pong
     players[side].score += 1
     ball.reset
     puts players[side].score.to_s
+    network.send(side.to_s + ":" + players[side].score.to_s)
   end
 end

@@ -12,30 +12,15 @@ vel = 1.0
 WRD = WordWrapper.new
 UDP = Pong::Network::UDP.new(9998)
 
-hosting = true
+hosting = ARGV.empty?
+ip = ARGV[0]
 
-while true
-  WRD.slowsay("Are you hosting? [Y/N] ")
-  input = gets.chomp
-  if input == "N".downcase
-    hosting = false
-  elsif input == "Y".downcase
-    hosting = true
-  else
-    WRD.slowsay("Invalid answer", true)
-  end
-
-  if hosting
-    WRD.slowsay("Well then, lets go!", true)
-    pong.serve
-    break
-  else
-    WRD.slowsay("Enter Ip > ")
-    ip = gets.chomp
-    pong.connect(ip)
-    WRD.slowsay("Connected!")
-    break
-  end
+if hosting
+  WRD.slowsay("Well then, lets go!", true)
+  pong.serve
+else
+  pong.connect(ip)
+  WRD.slowsay("Connected!")
 end
 
 set title: "Pong"
@@ -44,7 +29,9 @@ set height: pong.height
 set width:  pong.width
 
 on :key do |e|
-  #nothing
+  if e.key == :escape
+    close
+  end
 end
 
 on :mouse do |e|
