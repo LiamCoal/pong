@@ -1,3 +1,4 @@
 IDEAS:
 
-Add Multiplayer using UDP
+Fix the ball problems
+Sync all important varibles
