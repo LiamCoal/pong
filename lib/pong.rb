@@ -6,6 +6,7 @@ require "pong/network"
 require "liamiam/tools"
 require "pong/ball"
 require "pong/math/angles"
+require 'ruby2d'
 
 class Pong
   attr_reader :width
@@ -28,7 +29,32 @@ class Pong
     @player = l
     @opponent = r
     @network = Pong::Network::UDP.new(addr, 9999)
-    @ball = Ball.new(self, width / 2, height / 2)
+    @ball = Ball.new(self, (width / 2) - 7.5, (height / 2) - 7.5, 15)
+    @ls = Text.new(
+      '0',
+      x: 50, y: 10,
+      font: 'lib/ARCADECLASSIC.TTF',
+      size: 48,
+      color: 'gray',
+      rotate: 0,
+      z: 1000
+    )
+    @rs = Text.new(
+      '0',
+      x: (@width) - (48 + 25), y: 10,
+      font: 'lib/ARCADECLASSIC.TTF',
+      size: 48,
+      color: 'gray',
+      rotate: 0,
+      z: 1000
+    )
+    Line.new(
+      x1: width / 2, y1: 0,
+      x2: width / 2, y2: height,
+      width: 10,
+      color: 'silver',
+      z: -1000
+    )
     @hosting = options[:join].nil?
     ball.reset
   end
@@ -60,7 +86,13 @@ class Pong
     player.handle_mouse_event(e)
   end
 
+  def handle_score_update
+    @ls.text = "#{@l.score}"
+    @rs.text = "#{@r.score}"
+  end
+
   def handle_update
+    handle_score_update
     send_ball_position if @hosting
     send_scores if @hosting
     send_paddle_position

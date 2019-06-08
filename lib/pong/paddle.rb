@@ -24,7 +24,8 @@ class Pong::Paddle
       y: position,
       width: WIDTH,
       height: HEIGHT, 
-      color: "white"
+      color: "white",
+      z: 10
     )
   end
 

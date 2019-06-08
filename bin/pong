@@ -32,7 +32,7 @@ else
 end
 
 set title: "Pong"
-set background: "black"
+set background: "blue"
 set height: pong.height
 set width:  pong.width
 

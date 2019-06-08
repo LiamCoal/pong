@@ -2,6 +2,7 @@ class Pong::Ball
   attr_reader :pong
   attr_reader :sprite
   attr_reader :x, :y, :size, :angle, :vel
+  attr_reader :pongsound
 
   def initialize(pong, x, y, size = 15)
     @pong = pong
@@ -14,8 +15,9 @@ class Pong::Ball
 
     move(x, y)
     go(0, 0)
-
+    @pongsound = Sound.new('lib/pongsound.mp3')
     puts "Ball initallized"
+    @pongsound.play
   end
 
   def move(x, y)
@@ -28,7 +30,7 @@ class Pong::Ball
     @vel = v
   end
 
-  def bounce(surface)
+  def bounce(surface, paddle=false)
     new_angle = 0
     randangle = Pong::Moth::Angles.radians(rand(-10..10))
     case surface
@@ -40,6 +42,8 @@ class Pong::Ball
       puts "y bounce from #{angle} to #{new_angle}"
     end
     go(new_angle, vel)
+    @pongsound.play if hit_player?(@pong.player)
+    @pongsound.play if hit_player?(@pong.opponent)
   end
 
   def calculate_new_position
