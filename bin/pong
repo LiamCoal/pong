@@ -2,26 +2,32 @@
 # Copyright Liam and Jeremy Cole
 
 require 'ruby2d'
+require 'optparse'
 
 require 'pong'
+
+@options = {
+  join: nil,
+  bind: "0.0.0.0"
+}
+
+OptionParser.new do |opts|
+  opts.on("-j", "--join=IP", "The IP to join.") { |o| @options[:join] = o}
+  opts.on("-b", "--bind=IP", "The IP to bind. Normally 0.0.0.0") { |o| @options[:bind] = o}
+end.parse!
 
 angle = 90.0
 vel = 1.0
 
 WRD = WordWrapper.new
 
-hosting = ARGV.empty?
-ip = ARGV[0]
-hostip = ARGV[1]
-hostip ||= "127.0.0.1"
-
-if hosting
-  pong = Pong.new(800, 400, hostip)
+if @options[:join].nil?
+  pong = Pong.new(800, 400, @options[:bind])
   WRD.slowsay("Well then, lets go!", true)
   pong.serve
 else
-  pong = Pong.new(800, 400, "127.0.0.2")
-  pong.connect(ip)
+  pong = Pong.new(800, 400, @options[:bind])
+  pong.connect(@options[:join])
   WRD.slowsay("Connected!")
 end
 
