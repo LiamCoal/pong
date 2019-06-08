@@ -30,45 +30,24 @@ class Pong
     @opponent = r
     @network = Pong::Network::UDP.new(addr, 9999)
     @ball = Ball.new(self, (width / 2) - 7.5, (height / 2) - 7.5, 15)
-    unless @hosting
-      @ls = Text.new(
-        '0',
-        x: (@width) - (48 + 25), y: 10,
-        font: 'lib/ARCADECLASSIC.TTF',
-        size: 48,
-        color: 'gray',
-        rotate: 0,
-        z: 1000
-      )
-      @rs = Text.new(
-        '0',
-        x: 50, y: 10,
-        font: 'lib/ARCADECLASSIC.TTF',
-        size: 48,
-        color: 'gray',
-        rotate: 0,
-        z: 1000
-      )
-    else
-      @ls = Text.new(
-        '0',
-        x: 50, y: 10,
-        font: 'lib/ARCADECLASSIC.TTF',
-        size: 48,
-        color: 'gray',
-        rotate: 0,
-        z: 1000
-      )
-      @rs = Text.new(
-        '0',
-        x: (@width) - (48 + 25), y: 10,
-        font: 'lib/ARCADECLASSIC.TTF',
-        size: 48,
-        color: 'gray',
-        rotate: 0,
-        z: 1000
-      )
-      end
+    @ls = Text.new(
+      'host',
+      x: 50, y: 10,
+      font: 'lib/ARCADECLASSIC.TTF',
+      size: 48,
+      color: 'gray',
+      rotate: 0,
+      z: 1000
+    )
+    @rs = Text.new(
+      'join',
+      x: (@width) - (48 + 25), y: 10,
+      font: 'lib/ARCADECLASSIC.TTF',
+      size: 48,
+      color: 'gray',
+      rotate: 0,
+      z: 1000
+    )
     Line.new(
       x1: width / 2, y1: 0,
       x2: width / 2, y2: height,
@@ -95,7 +74,7 @@ class Pong
   end
 
   def send_scores
-    network.send("S:%i,%i" % [opponent.score, player.score])
+    network.send("S:%i,%i" % [@l.score, @r.score])
   end
 
   def recv_paddle_position(position, ballx, bally)
@@ -108,8 +87,13 @@ class Pong
   end
 
   def handle_score_update
-    @ls.text = "#{@l.score}"
-    @rs.text = "#{@r.score}"
+    if @l.score == 0 && @r.score == 0
+      @ls.text = 'p1'
+      @rs.text = 'p2'
+    else
+      @ls.text = "#{@l.score}"
+      @rs.text = "#{@r.score}"
+    end
   end
 
   def handle_update
