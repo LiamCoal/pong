@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # Copyright Liam and Jeremy Cole
 
 require 'ruby2d'
@@ -11,10 +12,11 @@ WRD = WordWrapper.new
 
 hosting = ARGV.empty?
 ip = ARGV[0]
-
+hostip = ARGV[1]
+hostip ||= "127.0.0.1"
 
 if hosting
-  pong = Pong.new(800, 400, "127.0.0.1")
+  pong = Pong.new(800, 400, hostip)
   WRD.slowsay("Well then, lets go!", true)
   pong.serve
 else
