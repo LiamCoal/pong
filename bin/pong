@@ -22,11 +22,11 @@ vel = 1.0
 WRD = WordWrapper.new
 
 if @options[:join].nil?
-  pong = Pong.new(800, 400, @options[:bind])
+  pong = Pong.new(800, 400, @options[:bind], @options)
   WRD.slowsay("Well then, lets go!", true)
   pong.serve
 else
-  pong = Pong.new(800, 400, @options[:bind])
+  pong = Pong.new(800, 400, @options[:bind], @options)
   pong.connect(@options[:join])
   WRD.slowsay("Connected!")
 end

@@ -17,8 +17,9 @@ class Pong
   attr_reader :opponent
   attr_reader :network
   attr_reader :ball
+  attr_reader :hosting
 
-  def initialize(width, height, addr)
+  def initialize(width, height, addr, options)
     @width = width
     @height = height
     @l = Pong::Player.new(:left, self)
@@ -28,6 +29,7 @@ class Pong
     @opponent = r
     @network = Pong::Network::UDP.new(addr, 9999)
     @ball = Ball.new(self, width / 2, height / 2)
+    @hosting = options[:join].nil?
     ball.reset
   end
 
@@ -38,25 +40,31 @@ class Pong
   end
 
   def send_paddle_position
-    network.send("%i" % player.paddle.position)
+    network.send("%i:%f,%f" % [player.paddle.position, ball.x, ball.y])
   end
 
-  def recv_paddle_position(position)
+  def recv_paddle_position(position, ballx, bally)
     opponent.paddle.move(position)
+    ball.move ballx, bally
   end
 
   def handle_mouse_event(e)
     player.handle_mouse_event(e)
-    send_paddle_position
   end
 
-
   def handle_update
+    send_paddle_position if @hosting
     if message = network.recv
-      recv_paddle_position(message.to_i)
+      puts message.nil?
+      message0 = message.split(':')
+      paddlepos = message0[0].to_i
+      ballpos = message0[1].split(',')
+      ballx = ballpos[0].to_i
+      bally = ballpos[1].to_i
+      recv_paddle_position(paddlepos, ballx, bally)
     end
-
-    ball.handle_update
+    
+    ball.handle_update if @hosting 
   end
 
   def serve
