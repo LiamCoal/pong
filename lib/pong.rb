@@ -30,24 +30,45 @@ class Pong
     @opponent = r
     @network = Pong::Network::UDP.new(addr, 9999)
     @ball = Ball.new(self, (width / 2) - 7.5, (height / 2) - 7.5, 15)
-    @ls = Text.new(
-      '0',
-      x: 50, y: 10,
-      font: 'lib/ARCADECLASSIC.TTF',
-      size: 48,
-      color: 'gray',
-      rotate: 0,
-      z: 1000
-    )
-    @rs = Text.new(
-      '0',
-      x: (@width) - (48 + 25), y: 10,
-      font: 'lib/ARCADECLASSIC.TTF',
-      size: 48,
-      color: 'gray',
-      rotate: 0,
-      z: 1000
-    )
+    unless @hosting
+      @ls = Text.new(
+        '0',
+        x: (@width) - (48 + 25), y: 10,
+        font: 'lib/ARCADECLASSIC.TTF',
+        size: 48,
+        color: 'gray',
+        rotate: 0,
+        z: 1000
+      )
+      @rs = Text.new(
+        '0',
+        x: 50, y: 10,
+        font: 'lib/ARCADECLASSIC.TTF',
+        size: 48,
+        color: 'gray',
+        rotate: 0,
+        z: 1000
+      )
+    else
+      @ls = Text.new(
+        '0',
+        x: 50, y: 10,
+        font: 'lib/ARCADECLASSIC.TTF',
+        size: 48,
+        color: 'gray',
+        rotate: 0,
+        z: 1000
+      )
+      @rs = Text.new(
+        '0',
+        x: (@width) - (48 + 25), y: 10,
+        font: 'lib/ARCADECLASSIC.TTF',
+        size: 48,
+        color: 'gray',
+        rotate: 0,
+        z: 1000
+      )
+      end
     Line.new(
       x1: width / 2, y1: 0,
       x2: width / 2, y2: height,
