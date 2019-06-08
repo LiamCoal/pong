@@ -40,7 +40,15 @@ class Pong
   end
 
   def send_paddle_position
-    network.send("%i:%f,%f" % [player.paddle.position, ball.x, ball.y])
+    network.send("P:%i" % player.paddle.position)
+  end
+
+  def send_ball_position
+    network.send("B:%i,%i" % [ball.x, ball.y])
+  end
+
+  def send_scores
+    network.send("S:%i,%i" % [opponent.score, player.score])
   end
 
   def recv_paddle_position(position, ballx, bally)
@@ -53,15 +61,38 @@ class Pong
   end
 
   def handle_update
-    send_paddle_position if @hosting
-    if message = network.recv
-      puts message.nil?
+    send_ball_position if @hosting
+    send_scores if @hosting
+    send_paddle_position
+    while message = network.recv
       message0 = message.split(':')
-      paddlepos = message0[0].to_i
-      ballpos = message0[1].split(',')
-      ballx = ballpos[0].to_i
-      bally = ballpos[1].to_i
-      recv_paddle_position(paddlepos, ballx, bally)
+      if message0[0] ==  'B'
+        ballpos = message0[1].split(',')
+        ballx = ballpos[0].to_i
+        bally = ballpos[1].to_i
+        recv_paddle_position opponent.paddle.position, ballx, bally
+      elsif message0[0] == 'P'
+        paddlepos = message0[1].to_i
+        recv_paddle_position paddlepos, ball.x, ball.y
+      elsif message0[0] == 'S'
+        s = message0[1].split(',')
+        os = s[0].to_i
+        ps = s[1].to_i
+        opponent.score = os
+        player.score = ps
+      elsif message0[0] == 'l'
+        player.score = message0[1].to_i unless hosting
+        
+        puts "#{message0[1]} misses. Opponent: #{player.score} Losing: #{(message0[1].to_i <= player.score)}" if hosting
+        puts "opponent: #{message0[1]} misses. Opponent: #{opponent.score} Losing: #{(message0[1].to_i <= opponent.score)}" unless hosting
+      elsif message0[0] == 'r'
+        opponent.score = message0[1].to_i unless hosting
+
+        puts "#{message0[1]} misses. Opponent: #{player.score} Losing: #{(message0[1].to_i <= player.score)}" unless hosting
+        puts "opponent: #{message0[1]} misses. Opponent: #{opponent.score} Losing: #{(message0[1].to_i <= player.score)}" if hosting
+      else
+        puts "WARN: Ignoring message #{message}. It's invalid."
+      end
     end
     
     ball.handle_update if @hosting 

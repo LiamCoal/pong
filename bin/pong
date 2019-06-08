@@ -28,7 +28,7 @@ if @options[:join].nil?
 else
   pong = Pong.new(800, 400, @options[:bind], @options)
   pong.connect(@options[:join])
-  WRD.slowsay("Connected!")
+  WRD.slowsay("Connected!", true)
 end
 
 set title: "Pong"
