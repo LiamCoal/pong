@@ -149,6 +149,8 @@ class Pong
     end
     
     ball.handle_update if @hosting 
+    @ball.pongsound.play if ball.hit_player?(@player)   && !@hosting
+    @ball.pongsound.play if ball.hit_player?(@opponent) && !@hosting
   end
 
   def serve
