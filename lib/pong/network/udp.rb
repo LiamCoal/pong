@@ -5,11 +5,11 @@ class Pong::Network::UDP
   attr_reader :peer
   attr_reader :port
 
-  def initialize(port)
+  def initialize(addr, port)
     @socket = UDPSocket.new
     @port = port
 
-    socket.bind("0.0.0.0", port)
+    socket.bind(addr, port)
   end
 
   def set_peer(peer)

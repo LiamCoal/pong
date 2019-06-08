@@ -4,21 +4,21 @@ require 'ruby2d'
 
 require 'pong'
 
-pong = Pong.new(800, 400)
-
 angle = 90.0
 vel = 1.0
 
 WRD = WordWrapper.new
-UDP = Pong::Network::UDP.new(9998)
 
 hosting = ARGV.empty?
 ip = ARGV[0]
 
+
 if hosting
+  pong = Pong.new(800, 400, "127.0.0.1")
   WRD.slowsay("Well then, lets go!", true)
   pong.serve
 else
+  pong = Pong.new(800, 400, "127.0.0.2")
   pong.connect(ip)
   WRD.slowsay("Connected!")
 end

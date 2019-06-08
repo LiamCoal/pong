@@ -18,7 +18,7 @@ class Pong
   attr_reader :network
   attr_reader :ball
 
-  def initialize(width, height)
+  def initialize(width, height, addr)
     @width = width
     @height = height
     @l = Pong::Player.new(:left, self)
@@ -26,7 +26,7 @@ class Pong
     @players = { :l => @l, :r => @r }
     @player = l
     @opponent = r
-    @network = Pong::Network::UDP.new(9999)
+    @network = Pong::Network::UDP.new(addr, 9999)
     @ball = Ball.new(self, width / 2, height / 2)
     ball.reset
   end
